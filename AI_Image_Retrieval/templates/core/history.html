@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">搜索历史</h2>
+<table class="table table-hover bg-white shadow-sm align-middle">
+    <thead class="thead-light">
+        <tr>
+            <th>时间</th>
+            <th>上传图片</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in records %}
+        <tr>
+            <td class="align-middle">{{ record.created_at|date:"Y-m-d H:i" }}</td>
+            <td class="align-middle">
+                <a href="{% url 'search_again' record.id %}" title="点击再次搜索">
+                    <img src="{{ record.image.url }}" 
+                         style="height: 60px; width: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;"
+                         class="hover-effect">
+                </a>
+            </td>
+            <td class="align-middle">
+                <a href="{% url 'search_again' record.id %}" class="btn btn-sm btn-outline-primary">
+                    查看结果
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="text-center p-4">暂无记录，快去搜一张试试吧！</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

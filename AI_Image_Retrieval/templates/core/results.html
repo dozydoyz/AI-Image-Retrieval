@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        
+        <div class="col-md-3">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white text-center">
+                    <h5 class="mb-0">查询图片</h5>
+                </div>
+                
+                <img src="{{ query_img.url }}" class="card-img-top p-2" style="object-fit: contain; max-height: 300px;">
+                
+                <div class="card-body border-top">
+                    <h6 class="text-muted text-uppercase small font-weight-bold mb-3">
+                        AI 识别结果
+                    </h6>
+                    
+                    <ul class="list-group list-group-flush">
+                        {% for label, score in ai_results %}
+                            
+                            {% if score > 20 %}
+                            <li class="list-group-item px-0 py-2 border-0">
+                                <span class="text-primary font-weight-bold" style="font-size: 1.2rem;">
+                                    {{ label|title }}
+                                </span>
+                                <span class="text-muted ml-1">
+                                    (置信度{{ score }}%)
+                                </span>
+                            </li>
+                            {% endif %}
+                            
+                        {% empty %}
+                            <li class="list-group-item text-muted">AI无法识别</li>
+                        {% endfor %}
+                    </ul>
+
+                    {% if ai_results and ai_results.0.1 <= 20 %}
+                        <div class="alert alert-warning mt-3 p-2 small">
+                            <i class="fa fa-info-circle"></i> 
+                            Label不太确定(置信度最高仅{{ ai_results.0.1 }}%)
+                            <br>猜测是: <strong>{{ ai_results.0.0 }}</strong>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-footer bg-white text-center">
+                    <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-block">
+                        返回重新搜索
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0">相似图片搜索(Top 10)</h4>
+                <span class="badge badge-pill badge-light border">DINOv2 Engine</span>
+            </div>
+
+            <div class="row">
+                {% for img_path, score in results %}
+                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                    <div class="card h-100 shadow-sm hover-effect">
+                        <div style="height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
+                            <img src="/static/{{ img_path }}" class="card-img-top" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                        </div>
+                        
+                        <div class="card-body py-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">相似度</small>
+                                <span class="badge badge-info">{{ score|stringformat:".4f" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <h3 class="text-muted">没有找到相似图片</h3>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<style>
+.hover-effect {
+    transition: transform 0.2s ease-in-out;
+}
+.hover-effect:hover {
+    transform: translateY(-5px);
+    border-color: #007bff;
+}
+</style>
+{% endblock %}

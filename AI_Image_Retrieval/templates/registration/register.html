@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white text-center">
+                <h4 class="mb-0">注册新用户</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% bootstrap_form form %}
+                    
+                    <button type="submit" class="btn btn-success btn-block mt-4">
+                        注册并登录
+                    </button>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <small class="text-muted">已有账号？ <a href="{% url 'login' %}">直接登录</a></small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

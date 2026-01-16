@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+<div class="jumbotron text-center bg-white shadow-sm">
+    <h1 class="display-4">图片AI搜索系统</h1>
+    <p class="lead">基于DINOv2(ViT)的高性能图像检索</p>
+    <hr class="my-4">
+    
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="post" enctype="multipart/form-data" class="card p-4 shadow-sm">
+                {% csrf_token %}
+                
+                <div class="form-group text-left">
+                    {% bootstrap_form form %}
+                </div>
+
+                <div id="preview-container" class="mt-3 mb-3" style="display: none;">
+                    <p class="text-muted small">预览：</p>
+                    <img id="image-preview" src="#" alt="预览图片" 
+                         style="max-width: 100%; max-height: 300px; border-radius: 8px; border: 2px dashed #ddd; padding: 4px;">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">
+                    开始搜索
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 等待页面加载完成
+    document.addEventListener("DOMContentLoaded", function() {
+        const input = document.getElementById('id_image');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('image-preview');
+
+        if (input) {
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                
+                if (file) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        previewContainer.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    previewContainer.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
